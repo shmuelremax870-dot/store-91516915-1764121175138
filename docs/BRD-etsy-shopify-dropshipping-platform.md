@@ -20,7 +20,7 @@
 7. [Module 3: POD Integration Layer](#7-module-3-pod-integration-layer)
 8. [Module 4: Central Management Dashboard](#8-module-4-central-management-dashboard)
 9. [Module 5: Sales Acceleration Engine](#9-module-5-sales-acceleration-engine)
-10. [Module 6: Workforce Management (VA Operations)](#10-module-6-workforce-management-va-operations)
+10. [Module 6: Account Holders & Torah Fund Management](#10-module-6-account-holders--torah-fund-management)
 11. [Etsy Limitations & Mitigation Strategies](#11-etsy-limitations--mitigation-strategies)
 12. [Technical Requirements](#12-technical-requirements)
 13. [Data Model](#13-data-model)
@@ -38,10 +38,10 @@
 
 This document defines the business requirements for a sophisticated e-commerce automation platform that operates at scale across **Etsy** and **Shopify** marketplaces. The platform will:
 
-- Generate and manage **thousands of Etsy stores** operated by contracted Virtual Assistants (VAs) from the **Haredi (ultra-Orthodox) community in Israel**
+- Generate and manage **thousands of Etsy stores** registered under identities of **Account Holders from the Haredi (ultra-Orthodox) community in Israel** - fully automated, no active management by Account Holders
 - Create **mirror Shopify stores** that replicate Etsy product catalogs for multi-channel presence
 - Integrate with **Print-on-Demand (POD)** suppliers for zero-inventory fulfillment
-- Provide a **centralized dashboard** for managing all stores, orders, finances, and workforce
+- Provide a **centralized dashboard** for Admin to manage all stores, orders, finances, and Account Holders
 - Deploy a **sales acceleration engine** using SEO, ad automation, and pricing intelligence
 
 The platform must handle Etsy's inherent limitations (rate limits, account verification, listing caps) through sophisticated orchestration and distributed account management.
@@ -56,7 +56,7 @@ The platform must handle Etsy's inherent limitations (rate limits, account verif
 | BO-2 | Mirror each Etsy store as a Shopify storefront | 1:1 parity with Etsy catalog |
 | BO-3 | Automate product listing, pricing, and order fulfillment | 95%+ automation rate |
 | BO-4 | Centralize management of all stores in a single dashboard | Single pane of glass |
-| BO-5 | Manage VA workforce with automated commission payouts | 1% commission per sale |
+| BO-5 | Manage Account Holders with automated Torah fund payouts | 5% of sales to Torah fund |
 | BO-6 | Maximize revenue per store via sales acceleration tools | 20% MoM growth target |
 | BO-7 | Minimize Etsy account suspension risk | <2% suspension rate |
 
@@ -70,7 +70,7 @@ The platform must handle Etsy's inherent limitations (rate limits, account verif
 - Shopify store generation and sync from Etsy
 - POD provider integration (Printful, Printify, Gooten, SPOD)
 - Centralized multi-store dashboard
-- VA workforce management and compensation system
+- Account Holder identity management and Torah fund payout system
 - Sales acceleration (SEO, ads, pricing)
 - Order routing and fulfillment automation
 - Financial reporting and analytics
@@ -95,8 +95,8 @@ The platform must handle Etsy's inherent limitations (rate limits, account verif
 +------------------------------------------------------+
         |            |            |            |
    +--------+  +--------+  +--------+  +--------+
-   | Store  |  |  POD   |  | Sales  |  |  VA    |
-   | Factory|  | Engine |  | Accel  |  | Mgmt   |
+   | Store  |  |  POD   |  | Sales  |  | Acct   |
+   | Factory|  | Engine |  | Accel  |  | Holder |
    +--------+  +--------+  +--------+  +--------+
         |            |            |            |
 +------------------------------------------------------+
@@ -297,9 +297,9 @@ A single dashboard to manage all Etsy stores, Shopify mirrors, orders, finances,
 | ID | Requirement | Priority |
 |----|-------------|----------|
 | DB-020 | Revenue by store, niche, time period | P0 |
-| DB-021 | Profit margin calculator (revenue - POD cost - fees - VA commission) | P0 |
+| DB-021 | Profit margin calculator (revenue - POD cost - fees - Account Holder 5%) | P0 |
 | DB-022 | Etsy + Shopify fee tracking | P0 |
-| DB-023 | VA commission calculation and payout tracking | P0 |
+| DB-023 | Account Holder Torah fund calculation and payout tracking | P0 |
 | DB-024 | Cash flow forecasting | P2 |
 | DB-025 | Tax reporting exports | P1 |
 | DB-026 | Multi-currency support (USD, ILS for VA payouts) | P1 |
@@ -322,7 +322,7 @@ A single dashboard to manage all Etsy stores, Shopify mirrors, orders, finances,
 |----|-------------|----------|
 | DB-040 | Real-time alerts for store suspensions/warnings | P0 |
 | DB-041 | Order issue notifications | P0 |
-| DB-042 | VA activity alerts | P1 |
+| DB-042 | Account Holder payout alerts | P1 |
 | DB-043 | Sales milestone notifications | P2 |
 | DB-044 | Configurable notification channels (email, Slack, Telegram, SMS) | P1 |
 
@@ -377,54 +377,79 @@ Maximize revenue across all stores through automated marketing, SEO optimization
 
 ---
 
-## 10. Module 6: Workforce Management (VA Operations)
+## 10. Module 6: Account Holders & Torah Fund Management
 
 ### 10.1 Purpose
-Manage Virtual Assistants from the **Haredi (ultra-Orthodox) community in Israel** who open and maintain Etsy stores under their identities, with a 1% commission structure.
+Manage **Account Holders** from the Haredi (ultra-Orthodox) community in Israel who provide their identity (name, ID, address) for Etsy store registration. Account Holders have a **passive role** - they do NOT manage stores. All store operations are fully automated and managed by the Admin through the platform. In return, Account Holders receive **5% of sales as a Torah study fund (מעשר לתורה)**.
 
-### 10.2 VA Lifecycle
+### 10.2 Key Concept: Passive Identity Model
 
 ```
-RECRUITMENT --> ONBOARDING --> STORE ASSIGNMENT --> ACTIVE --> PERFORMANCE REVIEW
-     |              |               |                 |              |
-     v              v               v                 v              v
-  Screening    KYC/Identity    Store Creation    Daily Tasks    Bonus/Termination
-  Community    Verification    Account Setup    Monitoring
-  Referral
+ACCOUNT HOLDER (Haredi)              ADMIN / PLATFORM
++---------------------------+        +---------------------------+
+| Provides:                 |        | Manages:                  |
+|  - Full name              |        |  - Store creation          |
+|  - Teudat Zehut (ID)     |        |  - Product listings        |
+|  - Address                |        |  - SEO & marketing         |
+|  - Phone number           |        |  - Order fulfillment       |
+|  - Bank details           |        |  - Customer service        |
+|                           |        |  - Ads & pricing           |
+| Receives:                 |        |  - ALL operations          |
+|  - 5% of sales            |        |                           |
+|    (Torah study fund)     |        | 100% AUTOMATED             |
++---------------------------+        +---------------------------+
 ```
 
-### 10.3 Workforce Characteristics
+**The Account Holder does NOT:**
+- Log in to Etsy or manage the store
+- Handle orders, customers, or listings
+- Make business decisions
+- Perform any daily tasks
+
+**The Account Holder ONLY:**
+- Provides identity for store registration
+- Receives 5% payout for Torah study support
+- May need to verify identity (one-time, during onboarding)
+
+### 10.3 Account Holder Lifecycle
+
+```
+RECRUITMENT --> ONBOARDING --> IDENTITY REGISTERED --> PASSIVE (receiving payouts)
+     |              |                |                        |
+     v              v                v                        v
+  Community    KYC/Identity    Store Created Under      Monthly 5% payout
+  Referral     Verification    Their Name (by Admin)    to bank/Bit
+```
+
+### 10.4 Account Holder Characteristics
 
 | Aspect | Details |
 |--------|---------|
 | Location | Israel (primarily Bnei Brak, Jerusalem, Beit Shemesh, Modi'in Illit, Beitar Illit) |
-| Language | Hebrew (primary), Yiddish, English |
-| Work Hours | Flexible; respects Shabbat (Friday sunset - Saturday night) and Jewish holidays |
-| Recruitment | Community referrals, Haredi employment organizations (e.g., KamaTech, Kivun) |
+| Role | Passive - identity provider only |
+| Involvement | One-time onboarding, then passive income |
+| Recruitment | Community referrals, Kolel networks, Haredi employment orgs |
 | Payment | Israeli bank transfer (primary), Bit app, PayBox, PayPal |
 | Currency | ILS (Israeli New Shekel) |
+| Motivation | Supporting Torah study through passive income |
 
-### 10.4 Functional Requirements
+### 10.5 Functional Requirements
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| VA-001 | VA profile management (personal info, KYC docs, bank details) | P0 |
-| VA-002 | Store-to-VA assignment mapping (multiple stores per VA) | P0 |
-| VA-003 | Automated commission calculation (1% of gross sale per store) | P0 |
-| VA-004 | Commission payout scheduling (weekly/bi-weekly/monthly) | P0 |
-| VA-005 | Israeli bank transfer / Bit app / PayPal payout integration | P0 |
-| VA-006 | VA performance scoring (store health, response time, compliance) | P1 |
-| VA-007 | Task assignment and tracking system | P1 |
-| VA-008 | VA training module library (video + quiz) - Hebrew UI support | P1 |
-| VA-009 | Communication hub (in-app messaging with VAs) - Hebrew RTL support | P1 |
-| VA-010 | VA scheduling with Shabbat/Jewish holiday auto-exclusion | P1 |
-| VA-011 | VA onboarding checklist automation | P1 |
-| VA-012 | NDA and contract digital signing (Hebrew + English) | P0 |
-| VA-013 | VA activity logging (actions performed on stores) | P0 |
-| VA-014 | Maximum stores per VA limit (configurable, default: 5) | P0 |
-| VA-015 | VA tier system (Junior: 3 stores, Senior: 5 stores, Lead: 10 stores) | P2 |
+| AH-001 | Account Holder profile management (name, ID, address, bank details) | P0 |
+| AH-002 | Store-to-Account Holder identity mapping (multiple stores per person) | P0 |
+| AH-003 | Automated commission calculation (5% of gross sale per store) | P0 |
+| AH-004 | Commission payout scheduling (monthly) | P0 |
+| AH-005 | Israeli bank transfer / Bit app / PayPal payout integration | P0 |
+| AH-006 | One-time identity verification (Teudat Zehut + selfie) | P0 |
+| AH-007 | Agreement digital signing (Hebrew + English) | P0 |
+| AH-008 | Payout history and transparency dashboard (simple, read-only) | P1 |
+| AH-009 | Maximum stores per Account Holder limit (configurable, default: 5) | P0 |
+| AH-010 | Account Holder status tracking (active, paused, terminated) | P0 |
+| AH-011 | Automated payout reports (monthly summary in Hebrew) | P1 |
 
-### 10.5 Commission Structure
+### 10.6 Commission Structure (5% Torah Fund)
 
 ```
 SALE EVENT:
@@ -435,27 +460,37 @@ SALE EVENT:
   --------------------------------
   Gross Margin:         $15.75
 
-  VA Commission (1% of sale price): $0.35
-  Net Profit:           $15.40
+  Account Holder Torah Fund (5% of sale price): $1.75
+  Net Profit:           $14.00
 ```
 
-### 10.6 VA Payout Rules
+### 10.7 Payout Rules
 
 - Minimum payout threshold: ₪200 / $50 (accumulated)
-- Payout frequency: Bi-weekly (1st and 15th), never on Shabbat/holidays
+- Payout frequency: Monthly (1st of each month), never on Shabbat/holidays
 - Currency: ILS (converted from USD at daily rate)
 - Payment methods: Israeli bank transfer (primary), Bit app, PayBox, PayPal
-- Commission disputes: 7-day resolution window
+- Payout disputes: 7-day resolution window
 - Returns/refunds: Commission clawed back if order refunded within 30 days
 
-### 10.7 Shabbat & Holiday Compliance
+### 10.8 Shabbat & Holiday Compliance
 
-The platform must respect religious observance:
-- **No automated actions** requiring VA attention during Shabbat (Friday sunset - Saturday nightfall)
 - **No payout processing** on Shabbat or Jewish holidays
-- **Scheduling system** auto-adjusts for Jewish calendar (Chagim, fast days)
 - **Notifications** queued and delivered after Shabbat/holiday ends
-- **Store operations** continue automatically (orders, POD routing) without VA intervention during Shabbat
+- **Store operations** continue fully automatically 24/7 (no Account Holder involvement needed)
+- **Onboarding meetings** never scheduled on Shabbat or Jewish holidays
+
+### 10.9 Full Automation - Admin Managed
+
+Since Account Holders are passive, ALL store operations are handled by the Admin through:
+- **Automated product listing** via AI + Etsy API
+- **Automated order routing** to POD providers
+- **Automated pricing & SEO** optimization
+- **Automated ad management** (Etsy Ads)
+- **Automated customer service** responses
+- **Automated tracking updates** to customers
+- **Anti-detect browser profiles** managed centrally by Admin
+- **Proxy rotation** managed centrally - no Account Holder login needed
 
 ---
 
@@ -524,7 +559,7 @@ The platform must respect religious observance:
 | Database | PostgreSQL (primary) + Redis (cache/queue) | Relational data + high-performance cache |
 | ORM | Prisma | Type-safe database access |
 | Job Queue | BullMQ (Redis-backed) | Reliable job processing with retries |
-| Authentication | NextAuth.js + RBAC | Multi-role auth (Admin, Manager, VA) |
+| Authentication | NextAuth.js + RBAC | Multi-role auth (Admin, Manager, Viewer) |
 | File Storage | AWS S3 / Cloudflare R2 | Design files, mockups, exports |
 | Hosting | Vercel (frontend) + Railway/AWS (backend) | Scalable deployment |
 | Monitoring | Sentry + Datadog | Error tracking + performance |
@@ -536,7 +571,7 @@ The platform must respect religious observance:
 |-------------|---------------|
 | Uptime SLA | 99.9% |
 | Max API response time | <500ms for dashboard, <2s for reports |
-| Concurrent users | 500+ (VAs + managers) |
+| Concurrent users | 50+ (admins + managers) |
 | Data retention | 7 years (financial data), 2 years (logs) |
 | Backup frequency | Daily automated, hourly for DB |
 | Proxy infrastructure | 5,000+ residential Israeli IPs |
@@ -548,7 +583,7 @@ The platform must respect religious observance:
 |--------|--------|--------|--------|
 | Active Etsy Stores | 1,000 | 5,000 | 15,000 |
 | Active Shopify Stores | 1,000 | 5,000 | 15,000 |
-| Active VAs | 200 | 1,000 | 3,000 |
+| Active Account Holders | 200 | 1,000 | 3,000 |
 | Daily Orders | 5,000 | 30,000 | 100,000 |
 | Monthly Revenue | $500K | $3M | $15M |
 
@@ -560,31 +595,33 @@ The platform must respect religious observance:
 
 ```
 +------------------+       +------------------+       +------------------+
-|       VA         |       |      STORE       |       |    PRODUCT       |
+| ACCOUNT_HOLDER   |       |      STORE       |       |    PRODUCT       |
 +------------------+       +------------------+       +------------------+
 | id               |<----->| id               |<----->| id               |
-| name             |  1:N  | va_id            |  1:N  | store_id         |
-| email            |       | platform (etsy/  |       | title            |
-| phone            |       |   shopify)       |       | description      |
-| gcash_number     |       | store_name       |       | price            |
-| bank_details     |       | niche_id         |       | cost (POD)       |
-| status           |       | status           |       | pod_provider_id  |
-| tier             |       | health_score     |       | design_file_url  |
-| max_stores       |       | etsy_store_id    |       | etsy_listing_id  |
-| commission_rate  |       | shopify_store_id |       | shopify_product_id|
-| total_earned     |       | mirror_store_id  |       | status           |
-| created_at       |       | created_at       |       | tags[]           |
-+------------------+       +------------------+       +------------------+
+| full_name        |  1:N  | account_holder_id|  1:N  | store_id         |
+| teudat_zehut     |       | platform (etsy/  |       | title            |
+| email            |       |   shopify)       |       | description      |
+| phone            |       | store_name       |       | price            |
+| address          |       | niche_id         |       | cost (POD)       |
+| bank_details     |       | status           |       | pod_provider_id  |
+| bit_phone        |       | health_score     |       | design_file_url  |
+| status           |       | etsy_store_id    |       | etsy_listing_id  |
+| max_stores       |       | shopify_store_id |       | shopify_product_id|
+| torah_fund_rate  |       | mirror_store_id  |       | status           |
+| total_earned     |       | created_at       |       | tags[]           |
+| verified_at      |       +------------------+       +------------------+
+| created_at       |
++------------------+
 
 +------------------+       +------------------+       +------------------+
-|      ORDER       |       |    COMMISSION     |       |     NICHE        |
+|      ORDER       |       |   TORAH_FUND     |       |     NICHE        |
 +------------------+       +------------------+       +------------------+
 | id               |       | id               |       | id               |
-| store_id         |       | va_id            |       | name             |
+| store_id         |       | account_holder_id|       | name             |
 | product_id       |       | order_id         |       | keywords[]       |
 | platform         |       | sale_amount      |       | avg_margin       |
-| customer_name    |       | commission_rate  |       | competition_level|
-| amount           |       | commission_amount|       | trending_score   |
+| customer_name    |       | fund_rate (5%)   |       | competition_level|
+| amount           |       | fund_amount      |       | trending_score   |
 | pod_cost         |       | status (pending/ |       | template_id      |
 | platform_fees    |       |   paid/clawed)   |       | product_count    |
 | profit           |       | payout_id        |       +------------------+
@@ -595,9 +632,9 @@ The platform must respect religious observance:
 | created_at       |       |     PAYOUT       |       | id               |
 +------------------+       +------------------+       | store_id         |
                            | id               |       | proxy_ip         |
-                           | va_id            |       | browser_profile  |
+                           | account_holder_id|       | browser_profile  |
                            | amount_usd       |       | user_agent       |
-                           | amount_php       |       | fingerprint_hash |
+                           | amount_ils       |       | fingerprint_hash |
                            | exchange_rate    |       | last_used        |
                            | payment_method   |       | status           |
                            | status           |       +------------------+
@@ -607,12 +644,12 @@ The platform must respect religious observance:
 
 ### 13.2 Key Relationships
 
-- **VA** 1:N **Store** (one VA operates multiple stores)
+- **Account_Holder** 1:N **Store** (one Account Holder's identity used for multiple stores)
 - **Store** 1:N **Product** (one store has many products)
 - **Store** 1:1 **Store** (Etsy store mirrors one Shopify store)
 - **Product** 1:N **Order** (one product can have many orders)
-- **Order** 1:1 **Commission** (each order generates one commission record)
-- **VA** 1:N **Payout** (VA receives periodic payouts)
+- **Order** 1:1 **Torah_Fund** (each order generates one Torah fund record)
+- **Account_Holder** 1:N **Payout** (Account Holder receives periodic payouts)
 - **Store** 1:1 **Proxy_Profile** (each store has unique digital identity)
 
 ---
@@ -669,7 +706,7 @@ The platform must respect religious observance:
 |----|-------------|----------|
 | SEC-001 | End-to-end encryption for all API communications (TLS 1.3) | P0 |
 | SEC-002 | VA credentials stored in encrypted vault (AES-256) | P0 |
-| SEC-003 | Role-based access control (Admin, Manager, VA, Viewer) | P0 |
+| SEC-003 | Role-based access control (Admin, Manager, Viewer) | P0 |
 | SEC-004 | Multi-factor authentication for admin accounts | P0 |
 | SEC-005 | Audit logging of all administrative actions | P0 |
 | SEC-006 | Automated security scanning in CI/CD | P1 |
@@ -709,7 +746,7 @@ The platform must respect religious observance:
 | Etsy Transaction + Processing Fees | 11-15% |
 | Shopify Subscription + Fees | 3-5% |
 | Etsy Ads | 5-12% |
-| VA Commission | 1% |
+| Account Holder Torah Fund | 5% |
 | Proxy/Anti-detect Infrastructure | Fixed monthly |
 | Platform Hosting & Tools | Fixed monthly |
 
@@ -720,12 +757,12 @@ Average Selling Price:              $30.00
   - POD Cost:                       -$10.50  (35%)
   - Etsy Fees (6.5% + $0.20 + 3%): -$3.05   (10.2%)
   - Etsy Ads (8%):                  -$2.40   (8%)
-  - VA Commission (1%):            -$0.30   (1%)
+  - Torah Fund (5%):                -$1.50   (5%)
   ----------------------------------------
-  Net Profit per Sale:              $13.75   (45.8%)
+  Net Profit per Sale:              $12.55   (41.8%)
 
-  x 5,000 orders/month = $68,750/month net profit
-  x 30,000 orders/month = $412,500/month net profit
+  x 5,000 orders/month = $62,750/month net profit
+  x 30,000 orders/month = $376,500/month net profit
 ```
 
 ---
@@ -736,7 +773,7 @@ Average Selling Price:              $30.00
 |------|-------------|--------|------------|
 | Mass Etsy account suspension | Medium | Critical | Warm-up protocol, account isolation, appeal system |
 | Etsy API changes/restrictions | Medium | High | API version monitoring, abstraction layer, manual fallback |
-| VA fraud/misuse of store access | Low | High | Activity logging, limited permissions, community referral vetting |
+| Account Holder identity issues | Low | High | One-time KYC verification, Teudat Zehut validation, community vetting |
 | POD quality issues | Medium | Medium | Multi-provider fallback, sample testing, reviews monitoring |
 | Etsy policy changes | Medium | High | Policy monitoring, automated compliance updates |
 | Data breach (VA PII) | Low | Critical | Encryption, access controls, audit logging |
@@ -752,39 +789,39 @@ Average Selling Price:              $30.00
 ### Phase 1: Foundation (Months 1-3)
 - [ ] Core dashboard (store management, basic analytics)
 - [ ] Etsy API integration (listings, orders)
-- [ ] VA management system (profiles, store assignment)
+- [ ] Account Holder management system (profiles, identity verification, store mapping)
 - [ ] Single POD provider integration (Printful)
-- [ ] Manual store creation workflow with VA guide
-- [ ] Commission tracking (manual payout)
-- **Target:** 50 active stores, 10 VAs
+- [ ] Admin-driven store creation workflow (fully automated)
+- [ ] Torah fund tracking (manual payout)
+- **Target:** 50 active stores, 10 Account Holders
 
 ### Phase 2: Automation (Months 4-6)
 - [ ] Automated store warm-up protocol
 - [ ] Shopify mirror generator
 - [ ] Multi-POD provider routing
 - [ ] Etsy SEO engine
-- [ ] Automated commission payouts (GCash/PayPal)
+- [ ] Automated Torah fund payouts (Israeli bank/Bit/PayPal)
 - [ ] Anti-detect browser profile management
 - [ ] Proxy rotation system
-- **Target:** 250 active stores, 50 VAs
+- **Target:** 250 active stores, 50 Account Holders
 
 ### Phase 3: Scale (Months 7-9)
 - [ ] Etsy Ads automation
 - [ ] Sales acceleration engine
 - [ ] Advanced analytics and reporting
 - [ ] Store health monitoring and auto-remediation
-- [ ] VA training platform
 - [ ] Niche research and trend detection
-- **Target:** 1,000 active stores, 200 VAs
+- [ ] Full automation pipeline (zero manual intervention)
+- **Target:** 1,000 active stores, 200 Account Holders
 
 ### Phase 4: Optimization (Months 10-12)
 - [ ] AI-powered design generation
 - [ ] Dynamic pricing engine
 - [ ] Social media auto-posting
 - [ ] Advanced financial forecasting
-- [ ] VA tier system and performance bonuses
 - [ ] Store cloning and template library
-- **Target:** 2,000+ active stores, 400+ VAs
+- [ ] Account Holder self-service payout dashboard
+- **Target:** 2,000+ active stores, 400+ Account Holders
 
 ---
 
@@ -808,18 +845,18 @@ Average Selling Price:              $30.00
 | Listing automation rate | 95%+ |
 | Order fulfillment automation | 98%+ |
 | Average order-to-ship time | <72 hours |
-| VA commission payout accuracy | 99.9% |
+| Torah fund payout accuracy | 99.9% |
 | Platform uptime | 99.9% |
 | API error rate | <0.1% |
 
-### 19.3 VA KPIs
+### 19.3 Account Holder KPIs
 
 | KPI | Target |
 |-----|--------|
-| VA retention rate | >80% (annual) |
-| Average stores per VA | 5 |
-| VA onboarding time | <3 days |
-| VA satisfaction score | >4/5 |
+| Account Holder retention rate | >90% (annual) |
+| Average stores per Account Holder | 5 |
+| Account Holder onboarding time | <1 day |
+| Torah fund payout on-time rate | >99% |
 
 ---
 
@@ -827,7 +864,7 @@ Average Selling Price:              $30.00
 
 | Term | Definition |
 |------|------------|
-| **VA** | Virtual Assistant - contracted worker from the Haredi community in Israel who opens and manages Etsy stores |
+| **Account Holder** | Person from the Haredi community in Israel who provides their identity for Etsy store registration; passive role with 5% Torah fund payout |
 | **POD** | Print on Demand - manufacturing model where products are only produced when ordered |
 | **Mirror Store** | Shopify store that replicates an Etsy store's catalog |
 | **Store Factory** | Automated system for creating and configuring new Etsy stores |
@@ -836,7 +873,8 @@ Average Selling Price:              $30.00
 | **ROAS** | Return on Ad Spend |
 | **Niche** | Specific product category/vertical a store focuses on |
 | **Store Health Score** | Composite metric measuring store performance and compliance |
-| **Commission Clawback** | Reversal of VA commission due to order refund |
+| **Fund Clawback** | Reversal of Account Holder Torah fund payout due to order refund |
+| **Torah Fund** | 5% of each sale paid to Account Holder to support Torah study (מעשר לתורה) |
 | **PPLA** | Privacy Protection Law of 1981 (Israeli data protection law) |
 | **Bit** | Popular Israeli mobile payment app (by Bank Leumi) |
 | **KYC** | Know Your Customer - identity verification process |
@@ -845,20 +883,19 @@ Average Selling Price:              $30.00
 
 ---
 
-## Appendix A: VA Onboarding Checklist
+## Appendix A: Account Holder Onboarding Checklist
 
-1. Sign NDA and contractor agreement (digital - Hebrew + English)
-2. Submit KYC documents (Teudat Zehut / Israeli ID, proof of address)
-3. Register Israeli bank account or Bit app for payouts
-4. Complete Etsy store creation training (video + quiz - Hebrew)
-5. Set up anti-detect browser profile (guided)
-6. Create Etsy account with personal details
-7. Pass store setup verification (admin review)
-8. Receive first store assignment
-9. Complete first 5 listings (supervised)
-10. Transition to autonomous operation
+1. Community referral or recruitment contact
+2. Sign agreement (digital - Hebrew + English) - defines passive role & 5% Torah fund terms
+3. Submit KYC documents (Teudat Zehut / Israeli ID, selfie verification)
+4. Provide bank details (Israeli bank account or Bit app) for payouts
+5. Admin creates Etsy account using Account Holder's identity
+6. Admin verifies store setup (identity matches, account active)
+7. Account Holder receives confirmation - no further action required
+8. Monthly Torah fund payouts begin automatically
 
-**Note:** Onboarding sessions are never scheduled on Shabbat or Jewish holidays.
+**Note:** Onboarding meetings are never scheduled on Shabbat or Jewish holidays.
+**Note:** Account Holder has NO access to store management - all operations run by Admin via full automation.
 
 ## Appendix B: Niche Categories (Initial)
 
