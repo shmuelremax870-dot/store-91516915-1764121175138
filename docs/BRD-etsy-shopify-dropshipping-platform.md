@@ -38,7 +38,7 @@
 
 This document defines the business requirements for a sophisticated e-commerce automation platform that operates at scale across **Etsy** and **Shopify** marketplaces. The platform will:
 
-- Generate and manage **thousands of Etsy stores** operated by contracted Virtual Assistants (VAs) based in the Philippines
+- Generate and manage **thousands of Etsy stores** operated by contracted Virtual Assistants (VAs) from the **Haredi (ultra-Orthodox) community in Israel**
 - Create **mirror Shopify stores** that replicate Etsy product catalogs for multi-channel presence
 - Integrate with **Print-on-Demand (POD)** suppliers for zero-inventory fulfillment
 - Provide a **centralized dashboard** for managing all stores, orders, finances, and workforce
@@ -302,7 +302,7 @@ A single dashboard to manage all Etsy stores, Shopify mirrors, orders, finances,
 | DB-023 | VA commission calculation and payout tracking | P0 |
 | DB-024 | Cash flow forecasting | P2 |
 | DB-025 | Tax reporting exports | P1 |
-| DB-026 | Multi-currency support (USD, PHP for VA payouts) | P1 |
+| DB-026 | Multi-currency support (USD, ILS for VA payouts) | P1 |
 
 #### 8.2.4 Analytics & Reports
 
@@ -380,7 +380,7 @@ Maximize revenue across all stores through automated marketing, SEO optimization
 ## 10. Module 6: Workforce Management (VA Operations)
 
 ### 10.1 Purpose
-Manage Filipino Virtual Assistants who open and maintain Etsy stores under their identities, with a 1% commission structure.
+Manage Virtual Assistants from the **Haredi (ultra-Orthodox) community in Israel** who open and maintain Etsy stores under their identities, with a 1% commission structure.
 
 ### 10.2 VA Lifecycle
 
@@ -389,10 +389,22 @@ RECRUITMENT --> ONBOARDING --> STORE ASSIGNMENT --> ACTIVE --> PERFORMANCE REVIE
      |              |               |                 |              |
      v              v               v                 v              v
   Screening    KYC/Identity    Store Creation    Daily Tasks    Bonus/Termination
-  Interview    Verification    Account Setup    Monitoring
+  Community    Verification    Account Setup    Monitoring
+  Referral
 ```
 
-### 10.3 Functional Requirements
+### 10.3 Workforce Characteristics
+
+| Aspect | Details |
+|--------|---------|
+| Location | Israel (primarily Bnei Brak, Jerusalem, Beit Shemesh, Modi'in Illit, Beitar Illit) |
+| Language | Hebrew (primary), Yiddish, English |
+| Work Hours | Flexible; respects Shabbat (Friday sunset - Saturday night) and Jewish holidays |
+| Recruitment | Community referrals, Haredi employment organizations (e.g., KamaTech, Kivun) |
+| Payment | Israeli bank transfer (primary), Bit app, PayBox, PayPal |
+| Currency | ILS (Israeli New Shekel) |
+
+### 10.4 Functional Requirements
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
@@ -400,19 +412,19 @@ RECRUITMENT --> ONBOARDING --> STORE ASSIGNMENT --> ACTIVE --> PERFORMANCE REVIE
 | VA-002 | Store-to-VA assignment mapping (multiple stores per VA) | P0 |
 | VA-003 | Automated commission calculation (1% of gross sale per store) | P0 |
 | VA-004 | Commission payout scheduling (weekly/bi-weekly/monthly) | P0 |
-| VA-005 | Philippine bank/GCash/PayPal payout integration | P0 |
+| VA-005 | Israeli bank transfer / Bit app / PayPal payout integration | P0 |
 | VA-006 | VA performance scoring (store health, response time, compliance) | P1 |
 | VA-007 | Task assignment and tracking system | P1 |
-| VA-008 | VA training module library (video + quiz) | P1 |
-| VA-009 | Communication hub (in-app messaging with VAs) | P1 |
-| VA-010 | VA shift scheduling and availability management | P2 |
+| VA-008 | VA training module library (video + quiz) - Hebrew UI support | P1 |
+| VA-009 | Communication hub (in-app messaging with VAs) - Hebrew RTL support | P1 |
+| VA-010 | VA scheduling with Shabbat/Jewish holiday auto-exclusion | P1 |
 | VA-011 | VA onboarding checklist automation | P1 |
-| VA-012 | NDA and contract digital signing | P0 |
+| VA-012 | NDA and contract digital signing (Hebrew + English) | P0 |
 | VA-013 | VA activity logging (actions performed on stores) | P0 |
 | VA-014 | Maximum stores per VA limit (configurable, default: 5) | P0 |
 | VA-015 | VA tier system (Junior: 3 stores, Senior: 5 stores, Lead: 10 stores) | P2 |
 
-### 10.4 Commission Structure
+### 10.5 Commission Structure
 
 ```
 SALE EVENT:
@@ -427,14 +439,23 @@ SALE EVENT:
   Net Profit:           $15.40
 ```
 
-### 10.5 VA Payout Rules
+### 10.6 VA Payout Rules
 
-- Minimum payout threshold: $50 (accumulated)
-- Payout frequency: Bi-weekly (1st and 15th)
-- Currency: PHP (converted from USD at daily rate)
-- Payment methods: GCash (primary), Philippine bank transfer, PayPal
+- Minimum payout threshold: ₪200 / $50 (accumulated)
+- Payout frequency: Bi-weekly (1st and 15th), never on Shabbat/holidays
+- Currency: ILS (converted from USD at daily rate)
+- Payment methods: Israeli bank transfer (primary), Bit app, PayBox, PayPal
 - Commission disputes: 7-day resolution window
 - Returns/refunds: Commission clawed back if order refunded within 30 days
+
+### 10.7 Shabbat & Holiday Compliance
+
+The platform must respect religious observance:
+- **No automated actions** requiring VA attention during Shabbat (Friday sunset - Saturday nightfall)
+- **No payout processing** on Shabbat or Jewish holidays
+- **Scheduling system** auto-adjusts for Jewish calendar (Chagim, fast days)
+- **Notifications** queued and delivered after Shabbat/holiday ends
+- **Store operations** continue automatically (orders, POD routing) without VA intervention during Shabbat
 
 ---
 
@@ -459,13 +480,13 @@ SALE EVENT:
 
 | ID | Strategy | Implementation |
 |----|----------|---------------|
-| MIT-001 | Unique IP per store session | Residential proxy rotation (Philippine IPs for VAs) |
+| MIT-001 | Unique IP per store session | Residential proxy rotation (Israeli IPs for VAs) |
 | MIT-002 | Unique browser fingerprint | Anti-detect browser profiles (GoLogin/Multilogin) |
 | MIT-003 | Unique payment methods | Each VA uses their own bank/PayPal |
 | MIT-004 | Unique physical addresses | VA home addresses for verification |
-| MIT-005 | Unique phone numbers | Philippine SIM cards per VA |
+| MIT-005 | Unique phone numbers | Israeli SIM cards per VA |
 | MIT-006 | Unique email accounts | Separate email per store |
-| MIT-007 | No shared WiFi networks | VAs work from different locations/ISPs |
+| MIT-007 | No shared WiFi networks | VAs work from different locations/ISPs across Israel |
 
 #### 11.2.2 API Rate Limit Management
 
@@ -518,7 +539,7 @@ SALE EVENT:
 | Concurrent users | 500+ (VAs + managers) |
 | Data retention | 7 years (financial data), 2 years (logs) |
 | Backup frequency | Daily automated, hourly for DB |
-| Proxy infrastructure | 5,000+ residential Philippine IPs |
+| Proxy infrastructure | 5,000+ residential Israeli IPs |
 | Anti-detect browsers | GoLogin/Multilogin with 5,000+ profiles |
 
 ### 12.3 Scalability Targets
@@ -633,9 +654,10 @@ SALE EVENT:
 
 | Service | Usage |
 |---------|-------|
-| Wise (TransferWise) | International USD->PHP transfers |
+| Wise (TransferWise) | International USD->ILS transfers |
 | PayPal Payouts | VA commission payouts |
-| GCash API | Philippine mobile wallet payouts |
+| Israeli Bank Transfer API | Direct bank payouts (Leumi, Hapoalim, Discount, Mizrahi) |
+| Bit API | Israeli mobile wallet payouts |
 
 ---
 
@@ -652,7 +674,7 @@ SALE EVENT:
 | SEC-005 | Audit logging of all administrative actions | P0 |
 | SEC-006 | Automated security scanning in CI/CD | P1 |
 | SEC-007 | Data encryption at rest (database, file storage) | P0 |
-| SEC-008 | VA PII data handling compliant with Philippine DPA | P0 |
+| SEC-008 | VA PII data handling compliant with Israeli Privacy Protection Law (PPLA) | P0 |
 | SEC-009 | API key rotation every 90 days | P1 |
 | SEC-010 | Proxy credential isolation (no cross-store leakage) | P0 |
 
@@ -660,12 +682,12 @@ SALE EVENT:
 
 | Area | Requirement |
 |------|-------------|
-| Philippine Data Privacy Act (DPA) | VA PII protection, consent management |
+| Israeli Privacy Protection Law (PPLA) | VA PII protection, consent management |
 | Etsy Seller Policy | Compliance checker for all listings |
 | Etsy API Terms of Service | Rate limit adherence, data usage policies |
 | Shopify Partner Program | Compliance with store creation policies |
 | Tax Compliance | Sales tax collection where required |
-| Independent Contractor Laws | Proper VA classification (PH labor law) |
+| Israeli Labor & Contractor Laws | Proper VA classification (Israeli labor law, freelancer regulations) |
 
 ---
 
@@ -714,12 +736,12 @@ Average Selling Price:              $30.00
 |------|-------------|--------|------------|
 | Mass Etsy account suspension | Medium | Critical | Warm-up protocol, account isolation, appeal system |
 | Etsy API changes/restrictions | Medium | High | API version monitoring, abstraction layer, manual fallback |
-| VA fraud/misuse of store access | Low | High | Activity logging, limited permissions, background checks |
+| VA fraud/misuse of store access | Low | High | Activity logging, limited permissions, community referral vetting |
 | POD quality issues | Medium | Medium | Multi-provider fallback, sample testing, reviews monitoring |
 | Etsy policy changes | Medium | High | Policy monitoring, automated compliance updates |
 | Data breach (VA PII) | Low | Critical | Encryption, access controls, audit logging |
-| Philippine regulatory changes | Low | Medium | Legal counsel, contractor agreement updates |
-| Currency fluctuation (USD/PHP) | Medium | Low | Lock exchange rates at payout, hedging |
+| Israeli regulatory changes | Low | Medium | Legal counsel, contractor agreement updates |
+| Currency fluctuation (USD/ILS) | Medium | Low | Lock exchange rates at payout, hedging |
 | Shopify Partner program changes | Low | Medium | Alternative store creation methods |
 | Competitor copying model | High | Medium | Speed to scale, proprietary tooling, niche expertise |
 
@@ -805,7 +827,7 @@ Average Selling Price:              $30.00
 
 | Term | Definition |
 |------|------------|
-| **VA** | Virtual Assistant - contracted worker in the Philippines who opens and manages Etsy stores |
+| **VA** | Virtual Assistant - contracted worker from the Haredi community in Israel who opens and manages Etsy stores |
 | **POD** | Print on Demand - manufacturing model where products are only produced when ordered |
 | **Mirror Store** | Shopify store that replicates an Etsy store's catalog |
 | **Store Factory** | Automated system for creating and configuring new Etsy stores |
@@ -815,24 +837,28 @@ Average Selling Price:              $30.00
 | **Niche** | Specific product category/vertical a store focuses on |
 | **Store Health Score** | Composite metric measuring store performance and compliance |
 | **Commission Clawback** | Reversal of VA commission due to order refund |
-| **DPA** | Data Privacy Act of 2012 (Philippine data protection law) |
-| **GCash** | Popular Philippine mobile wallet / payment platform |
+| **PPLA** | Privacy Protection Law of 1981 (Israeli data protection law) |
+| **Bit** | Popular Israeli mobile payment app (by Bank Leumi) |
 | **KYC** | Know Your Customer - identity verification process |
+| **Shabbat** | Jewish Sabbath - Friday sunset to Saturday nightfall, no work permitted |
+| **ILS** | Israeli New Shekel - currency of Israel |
 
 ---
 
 ## Appendix A: VA Onboarding Checklist
 
-1. Sign NDA and contractor agreement (digital)
-2. Submit KYC documents (government ID, proof of address)
-3. Register Philippine bank account or GCash
-4. Complete Etsy store creation training (video + quiz)
+1. Sign NDA and contractor agreement (digital - Hebrew + English)
+2. Submit KYC documents (Teudat Zehut / Israeli ID, proof of address)
+3. Register Israeli bank account or Bit app for payouts
+4. Complete Etsy store creation training (video + quiz - Hebrew)
 5. Set up anti-detect browser profile (guided)
 6. Create Etsy account with personal details
 7. Pass store setup verification (admin review)
 8. Receive first store assignment
 9. Complete first 5 listings (supervised)
 10. Transition to autonomous operation
+
+**Note:** Onboarding sessions are never scheduled on Shabbat or Jewish holidays.
 
 ## Appendix B: Niche Categories (Initial)
 
