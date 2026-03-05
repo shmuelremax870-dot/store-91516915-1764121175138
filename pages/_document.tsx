@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <meta name="description" content="Fashion Boutique - E-commerce store" />
+        <meta name="description" content="Etsy Auto - Dropshipping Automation Platform" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
