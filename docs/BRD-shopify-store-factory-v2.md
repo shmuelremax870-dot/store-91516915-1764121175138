@@ -11,11 +11,12 @@
 
 | Priority | Capability | Target Phase |
 |----------|-----------|--------------|
-| **P0** | Store Factory -- automated Shopify store provisioning under one legal entity | Phase 1 |
+| **P0** | Store Factory -- guided provisioning + standardized configuration under one legal entity (automation gated on Shopify approval) | Phase 1 |
 | **P0** | POD Integration Layer (Printful + Printify) | Phase 1 |
 | **P0** | Central Management Dashboard (multi-store admin) | Phase 1 |
 | **P0** | Finance & Reporting -- unit economics, fee tracking | Phase 1 |
 | **P0** | Compliance & Governance -- Shopify policy, tax config, audit log | Phase 1 |
+| **P1** | Programmatic store provisioning (if Shopify provides an approved API / written confirmation) -- otherwise manual creation remains | Phase 2 |
 | **P1** | Brand/Niche Template System (themes, copy, imagery) | Phase 2 |
 | **P1** | Design Generation Pipeline (Midjourney-based creative) | Phase 2 |
 | **P1** | Growth Engine -- SEO automation, pricing rules | Phase 2 |
@@ -154,7 +155,7 @@ The platform replaces the previously drafted BRD (v1.0, ETSY-SHOP-AUTO) which re
 
 | ID | Requirement | Priority |
 |----|------------|----------|
-| SF-001 | Create new Shopify stores via Shopify Partners API (development stores promoted to paid) | P0 |
+| SF-001 | Provision new Shopify stores via approved Shopify method: **Default:** guided/manual creation in Partner Dashboard. **Optional:** programmatic provisioning ONLY if Shopify provides an approved API / written confirmation. (No circumvention; all stores owned by the same legal entity) | P0 |
 | SF-002 | Assign unique brand identity (name, domain, theme, logo) per store | P0 |
 | SF-003 | Auto-configure payment gateway (Shopify Payments) per store | P0 |
 | SF-004 | Auto-configure shipping profiles per store (based on POD provider locations) | P0 |
@@ -180,6 +181,7 @@ The platform replaces the previously drafted BRD (v1.0, ETSY-SHOP-AUTO) which re
 | Shopify Partners API rate limits | Queue-based throttling, respect published limits |
 | Shopify policy limits on stores per partner | Pre-validate with Shopify Partner support; monitor policy changes |
 | Store configuration drift over time | Periodic reconciliation job comparing live config vs. template |
+| No approved API for programmatic store creation | Automation deferred; guided/manual remains primary provisioning method until Shopify confirms an approved programmatic path |
 
 ---
 
@@ -556,7 +558,10 @@ Customer Order (Shopify)
 - **International-first:** Primary target markets are EU, UK, Australia, Canada. US is a secondary market.
 - **No physical presence in the US:** No office, employees, warehouse, or inventory in any US state.
 - **Fulfillment by third-party POD providers:** POD providers ship from their own facilities. The company does not control or direct fulfillment locations.
-- **Shopify Payments:** Used as the payment processor across all stores.
+- **Payments:**
+  - Primary: Shopify Payments ONLY if the company's European country is supported for Shopify Payments
+  - Fallback: third-party gateway (e.g., Stripe / Adyen / PayPal) per store where Shopify Payments is unavailable or restricted
+  - The platform must support both modes.
 
 ### 6.2 US Sales Tax
 
@@ -629,7 +634,7 @@ Niche selection      -->    [Niche approved?]      -->  Store provisioned
 Brand template       -->    [Brand assets ready?]  -->  Theme + branding applied
 Product catalog      -->    [POD mapping valid?]   -->  Products published
                             [Tax config set?]      -->  Tax engine active
-                            [Payments configured?] -->  Shopify Payments live
+                            [Payments configured?] -->  Payment gateway live
                             [Policies published?]  -->  Legal pages live
                             [Test order passed?]   -->  Store goes LIVE
 ```
@@ -669,7 +674,7 @@ Product catalog      -->    [POD mapping valid?]   -->  Products published
 | Brand assets complete | Logo, banner, product mockups all approved | Yes |
 | POD mapping valid | Every product linked to at least one POD provider + design file | Yes |
 | Tax configuration set | Tax engine active, jurisdictions configured | Yes |
-| Payments configured | Shopify Payments enabled and verified | Yes |
+| Payments configured | Shopify Payments verified OR approved third-party gateway (Stripe / Adyen / PayPal) configured and tested | Yes |
 | Policies published | Privacy policy, refund policy, terms of service pages live | Yes |
 | Test order passed | End-to-end order placed, routed to POD, tracking returned | Yes |
 | Domain configured | Custom domain active with SSL | No (can launch on .myshopify.com) |
@@ -974,6 +979,7 @@ Issues that must be resolved before or during Phase 1 build:
 | 10 | **Customer service model:** Who handles customer inquiries across 100+ stores? Shared inbox? AI-assisted? Outsourced? Not addressed in this BRD. | Operations | Phase 2 |
 | 11 | **Refund/return policy standardization:** Should all stores share the same refund policy, or can policies vary by niche/product type? | Legal + Operations | Phase 1 |
 | 12 | **Domain strategy:** Custom domains (.com) for every store? Subdomains? Cost and DNS management at scale? | Engineering | Phase 1 |
+| 13 | **Store creation method:** Is there an approved programmatic method to create/provision Shopify stores at scale for a single legal entity? If not, confirm operationally acceptable manual workflow + any limits on number of stores per Partner account. | Engineering + Shopify Partner Manager | Before Phase 1 |
 
 ---
 
